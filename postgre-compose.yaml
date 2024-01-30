@@ -13,3 +13,9 @@ services:
     volumes:
       - ./seeder/init-users.sql:/docker-entrypoint-initdb.d/init.sql
       - ./docker-volume\Keycloak:/var/lib/postgresql/data
+    networks:
+      - keycloak-network
+
+networks:
+  keycloak-network:
+    external: true
