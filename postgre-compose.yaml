@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  postgres:
+  postgresuser:
     image: postgres:latest
-    container_name: postgres_container
+    container_name: postgres_user_container
     ports:
       - "5432:5432"
     environment:
@@ -12,7 +12,22 @@ services:
       POSTGRES_DB: keycloakuser
     volumes:
       - ./seeder/init-users.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./docker-volume\Keycloak:/var/lib/postgresql/data
+      - ./docker-volume\KeycloakUser:/var/lib/postgresql/data
+    networks:
+      - keycloak-network
+      
+  postgresserver:
+    image: postgres:latest
+    container_name: postgres_server_container
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres123
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: keycloak
+    volumes:
+      - ./seeder/init-default-postgre.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./docker-volume\KeycloakServer:/var/lib/postgresql/data
     networks:
       - keycloak-network
 
