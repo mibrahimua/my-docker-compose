@@ -15,16 +15,17 @@ services:
       - ./docker-volume\KeycloakUser:/var/lib/postgresql/data
     networks:
       - keycloak-network
-      
+
   postgresserver:
     image: postgres:latest
     container_name: postgres_server_container
     ports:
-      - "5433:5432"
+      - "5433:5433"
     environment:
       POSTGRES_USER: postgres123
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: keycloak
+    command: -p 5433
     volumes:
       - ./seeder/init-default-postgre.sql:/docker-entrypoint-initdb.d/init.sql
       - ./docker-volume\KeycloakServer:/var/lib/postgresql/data

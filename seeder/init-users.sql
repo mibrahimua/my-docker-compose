@@ -1,3 +1,5 @@
+ALTER SYSTEM SET max_prepared_transactions TO 100;
+
 -- Create tbl_user table with phone column and created_at column
 CREATE TABLE tbl_user (
     id SERIAL PRIMARY KEY,
@@ -16,4 +18,18 @@ INSERT INTO tbl_user (username, email, password, phone) VALUES ('user4', 'user4@
 INSERT INTO tbl_user (username, email, password, phone) VALUES ('user5', 'user5@example.com', 'password5', '567-890-1234');
 -- Add more INSERT statements as needed
 
-ALTER SYSTEM SET max_prepared_transactions TO 100;
+
+CREATE TABLE otp_storage (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    otp_code VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Inserting dummy data
+INSERT INTO otp_storage (user_id, otp_code) VALUES
+    (1, '123456'),
+    (2, '654321'),
+    (3, '987654');
+
+
