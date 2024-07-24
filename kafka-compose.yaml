@@ -1,36 +1,22 @@
 version: '3.8'
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
     environment:
-      - discovery.type=single-node
-      - ES_JAVA_OPTS=-Xms512m -Xmx512m
-      - xpack.security.enabled=true
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - "9200:9200"
+      - "2181:2181"
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.13.2
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
     depends_on:
-      - elasticsearch
+      - zookeeper
     ports:
-      - "5601:5601"
+      - "9092:9092"
     environment:
-      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
-      ELASTICSEARCH_USERNAME: "elastic"
-      ELASTICSEARCH_PASSWORD: "changeme"  # Use the same password as set for elastic user
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.13.2
-    depends_on:
-      - elasticsearch
-    ports:
-      - "5044:5044"
-    environment:
-      - xpack.monitoring.enabled=true
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=changeme  # Use the same password as set for elastic user
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

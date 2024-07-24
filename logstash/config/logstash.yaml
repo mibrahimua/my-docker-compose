@@ -1,0 +1,5 @@
+path.data: /usr/share/logstash/data
+
+# Enable automatic config reloading
+config.reload.automatic: true
+config.reload.interval: 3s
