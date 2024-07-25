@@ -10,6 +10,8 @@ services:
       - ELASTIC_PASSWORD=changeme  # Ensure this is set to the correct password
     ports:
       - "9200:9200"
+    networks:
+      - kafka-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.13.2
@@ -21,6 +23,8 @@ services:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
       ELASTICSEARCH_USERNAME: "elastic"
       ELASTICSEARCH_PASSWORD: "changeme"  # Use the same password as set for elastic user
+    networks:
+      - kafka-network
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.13.2
@@ -36,3 +40,9 @@ services:
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
       - ./logstash/config/logstash.yaml:/usr/share/logstash/config/logstash.yaml
+    networks:
+      - kafka-network
+
+networks:
+  kafka-network:
+    external: true
