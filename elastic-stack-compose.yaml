@@ -10,6 +10,8 @@ services:
       - ELASTIC_PASSWORD=changeme  # Ensure this is set to the correct password
     ports:
       - "9200:9200"
+    volumes:
+      - ./docker-volume\ElasticSearch:/usr/share/elasticsearch/data
     networks:
       - kafka-network
 
@@ -23,6 +25,8 @@ services:
       ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
       ELASTICSEARCH_USERNAME: "elastic"
       ELASTICSEARCH_PASSWORD: "changeme"  # Use the same password as set for elastic user
+    volumes:
+      - ./docker-volume\Kibana:/usr/share/kibana/data
     networks:
       - kafka-network
 
