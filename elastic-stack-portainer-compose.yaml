@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.2
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=changeme  # Ensure this is set to the correct password
+    ports:
+      - "9200:9200"
+#    volumes:
+#      - /data/compose/6/docker-volumes/ElasticSearch/:/usr/share/elasticsearch/data
+    networks:
+      - kafka-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.2
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_HOSTS: "http://elasticsearch:9200"
+      ELASTICSEARCH_USERNAME: "elastic"
+      ELASTICSEARCH_PASSWORD: "changeme"  # Use the same password   as set for elastic user
+#    volumes:
+#      - /data/compose/6/docker-volumes/Kibana/:/usr/share/kibana/data
+    networks:
+      - kafka-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.13.2
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5044:5044"
+    environment:
+      - xpack.monitoring.enabled=false
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme  # Use the same password as set for elastic user
+    volumes:
+      - /data/compose/6/logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - /data/compose/6/logstash/config/logstash.yaml:/usr/share/logstash/config/logstash.yaml
+    networks:
+      - kafka-network
+
+networks:
+  kafka-network:
+    external: true
